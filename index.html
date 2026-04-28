@@ -1,55 +1,106 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID DELIMA SK MERBAU</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feca57 100%);
+            min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5); border-radius: 30px; padding: 40px 30px;
+            width: 100%; max-width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); text-align: center;
+        }
+        .profile-icon {
+            background: #6c5ce7; color: white; width: 80px; height: 80px; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 30px; font-weight: 800;
+            margin: 0 auto 20px; border: 4px solid white;
+        }
+        h2 { color: #2d3436; font-weight: 800; font-size: 1.8rem; margin: 0; }
+        .subtitle { color: #636e72; font-size: 0.9rem; margin-bottom: 30px; }
+        input {
+            width: 100%; padding: 18px 25px; border-radius: 50px; border: none;
+            background: white; font-size: 1rem; margin-bottom: 15px; outline: none; text-align: center;
+        }
+        .btn-search {
+            width: 100%; padding: 18px; border-radius: 50px; border: none; background: #6c5ce7;
+            color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s;
+        }
+        .btn-search:hover { transform: scale(1.02); background: #5b4bc4; }
+        #result { margin-top: 30px; text-align: left; }
+        .card {
+            background: white; border-radius: 20px; padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05); animation: slideUp 0.4s ease;
+        }
+        .card .name { font-weight: 800; color: #2d3436; font-size: 1.1rem; display: block; }
+        .id-container {
+            background: #f1f2f6; padding: 10px 15px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center; margin-top: 10px;
+        }
+        .id-text { color: #d63031; font-family: monospace; font-weight: 700; font-size: 0.9rem; word-break: break-all; }
+        .copy-btn { background: #6c5ce7; color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 0.7rem; cursor: pointer; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .error { color: #d63031; font-weight: 600; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="profile-icon">SP</div>
+    <h2>SK MERBAU</h2>
+    <p class="subtitle">ICT TEAM • Semakan ID DELIMa 2026</p>
+    
+    <input type="text" id="namaInput" placeholder="Taip nama murid...">
+    <button class="btn-search" onclick="cariSekarang()">CARI SEKARANG</button>
+
+    <div id="result"></div>
+</div>
+
 <script>
     const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIDL_97U8seCG9Ibuz-tfkjpouZe3V_q2Uh-NbvdhEIctFj35L6-LN55TuRw_3IQ/pub?output=csv";
-    let dataFull = [];
+    let database = [];
 
-    async function init() {
+    async function muatData() {
         try {
-            const res = await fetch(csvURL);
-            const text = await res.text();
-            
-            // Kod baru: Membersihkan data dan handle komma
-            const rows = text.split('\n').filter(r => r.trim() !== '');
-            dataFull = rows.map(r => {
-                // Regex kuat untuk asingkan CSV walaupun ada komma dalam quotes
-                return r.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-            });
-            
-            console.log("Data Berjaya Dimuatkan");
-        } catch (e) {
-            console.error("Gagal muat data");
-            document.getElementById('result').innerHTML = "<p class='status-msg'>Ralat: Internet tidak stabil.</p>";
-        }
+            const r = await fetch(csvURL);
+            const t = await r.text();
+            // Pecahkan CSV dan buang pembuka kata (quotes)
+            database = t.split('\n').map(line => line.split(',').map(cell => cell.replace(/"/g, '').trim()));
+            console.log("Data siap: " + database.length);
+        } catch (e) { console.error("Gagal!"); }
     }
 
-    function cariData() {
-        const input = document.getElementById('nameInput').value.trim().toUpperCase();
+    function cariSekarang() {
+        const query = document.getElementById('namaInput').value.trim().toUpperCase();
         const resDiv = document.getElementById('result');
         resDiv.innerHTML = '';
 
-        if (input.length < 3) {
-            resDiv.innerHTML = '<p class="status-msg">Sila taip sekurang-kurangnya 3 huruf.</p>';
+        if (query.length < 3) {
+            resDiv.innerHTML = '<p class="error">Sila taip sekurang-kurangnya 3 huruf.</p>';
             return;
         }
 
-        // Carian pintar: Scan semua kotak (cells) dalam satu baris
-        const match = dataFull.filter(row => {
-            return row.some(cell => cell && cell.toUpperCase().includes(input));
-        });
+        // Cari di mana-mana lajur (kerana Lajur A anda kosong)
+        const hasil = database.filter(row => row.some(cell => cell.toUpperCase().includes(query)));
 
-        if (match.length > 0) {
-            match.forEach(row => {
-                // Detect ID secara automatik: Scan kotak mana yang ada simbol @
-                const idDelima = row.find(c => c && c.includes('@')) || 'TIADA ID';
-                
-                // Pastikan kita ambil Nama dari Lajur B (row[1]) & Kelas dari Lajur D (row[3])
-                // Kita guna replace untuk buang tanda " jika data CSV tersalah format
-                const namaMurid = row[1] ? row[1].replace(/"/g, '') : 'TIADA NAMA';
-                const kelasMurid = row[3] ? row[3].replace(/"/g, '') : '-';
+        if (hasil.length > 0) {
+            hasil.forEach(row => {
+                // Cari mana satu kotak yang ada simbol '@' untuk dijadikan ID
+                const idDelima = row.find(c => c.includes('@')) || 'TIADA ID';
+                // Nama murid biasanya lajur kedua (indeks 1) dalam Sheets anda
+                const nama = row[1] || row[0]; 
+                const kelas = row[3] || row[2] || '-';
 
                 resDiv.innerHTML += `
                     <div class="card">
-                        <span class="name">${namaMurid}</span>
-                        <span class="class-name">KELAS: ${kelasMurid}</span>
+                        <span class="name">${nama}</span>
+                        <small style="color:#636e72">KELAS: ${kelas}</small>
                         <div class="id-container">
                             <span class="id-text">${idDelima}</span>
                             <button class="copy-btn" onclick="salin('${idDelima}')">SALIN</button>
@@ -58,25 +109,17 @@
                 `;
             });
         } else {
-            resDiv.innerHTML = '<p class="status-msg">Nama tidak dijumpai dalam rekod.</p>';
+            resDiv.innerHTML = '<p class="error">Nama tidak dijumpai dalam rekod.</p>';
         }
     }
 
-    function salin(teks) {
-        if(teks === 'TIADA ID') return;
-        navigator.clipboard.writeText(teks).then(() => {
-            alert("ID DELIMa disalin!");
-        }).catch(() => {
-            // Fallback untuk browser tertentu
-            const textArea = document.createElement("textarea");
-            textArea.value = teks;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            alert("ID DELIMa disalin!");
-        });
+    function salin(t) {
+        navigator.clipboard.writeText(t);
+        alert("ID disalin!");
     }
 
-    window.onload = init;
+    window.onload = muatData;
 </script>
+
+</body>
+</html>
