@@ -7,16 +7,17 @@
             const res = await fetch(csvURL);
             const text = await res.text();
             
-            // Kod baru untuk handle komma dalam nama
+            // Kod baru: Membersihkan data dan handle komma
             const rows = text.split('\n').filter(r => r.trim() !== '');
             dataFull = rows.map(r => {
-                // Guna regex untuk asingkan CSV dengan betul
+                // Regex kuat untuk asingkan CSV walaupun ada komma dalam quotes
                 return r.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
             });
             
             console.log("Data Berjaya Dimuatkan");
         } catch (e) {
             console.error("Gagal muat data");
+            document.getElementById('result').innerHTML = "<p class='status-msg'>Ralat: Internet tidak stabil.</p>";
         }
     }
 
@@ -30,17 +31,20 @@
             return;
         }
 
-        // Cari dalam semua lajur untuk lebih selamat
+        // Carian pintar: Scan semua kotak (cells) dalam satu baris
         const match = dataFull.filter(row => {
             return row.some(cell => cell && cell.toUpperCase().includes(input));
         });
 
         if (match.length > 0) {
             match.forEach(row => {
-                // Cari mana satu yang ada @moe-dl untuk dijadikan ID
-                const idDelima = row.find(c => c.includes('@')) || 'TIADA ID';
-                const namaMurid = row[0].replace(/"/g, ''); // Buang tanda pembuka kata jika ada
-                const kelasMurid = row[1] || '-';
+                // Detect ID secara automatik: Scan kotak mana yang ada simbol @
+                const idDelima = row.find(c => c && c.includes('@')) || 'TIADA ID';
+                
+                // Pastikan kita ambil Nama dari Lajur B (row[1]) & Kelas dari Lajur D (row[3])
+                // Kita guna replace untuk buang tanda " jika data CSV tersalah format
+                const namaMurid = row[1] ? row[1].replace(/"/g, '') : 'TIADA NAMA';
+                const kelasMurid = row[3] ? row[3].replace(/"/g, '') : '-';
 
                 resDiv.innerHTML += `
                     <div class="card">
@@ -61,6 +65,15 @@
     function salin(teks) {
         if(teks === 'TIADA ID') return;
         navigator.clipboard.writeText(teks).then(() => {
+            alert("ID DELIMa disalin!");
+        }).catch(() => {
+            // Fallback untuk browser tertentu
+            const textArea = document.createElement("textarea");
+            textArea.value = teks;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
             alert("ID DELIMa disalin!");
         });
     }
