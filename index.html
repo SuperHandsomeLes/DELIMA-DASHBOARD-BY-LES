@@ -3,59 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ID Delima SK Merbau</title>
+    <title>ID DELIMA SK MERBAU</title>
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding-top: 50px; }
-        .box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: #1a73e8; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        #result { margin-top: 20px; text-align: left; font-size: 14px; }
-        .item { background: #e8f0fe; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 5px solid #1a73e8; }
+        /* Import Font Modern */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            /* Latar Belakang Gradient ala-ala gambar inspirasi anda */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #feca57 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Header Style */
+        .profile-icon {
+            background: #6c5ce7;
+            color: white;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: 800;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+            border: 4px solid rgba(255,255,255,0.8);
+        }
+
+        h2 {
+            color: #2d3436;
+            font-weight: 800;
+            font-size: 1.8rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+            font-weight: 400;
+        }
+
+        /* Input & Button ala Capsule */
+        input {
+            width: 100%;
+            padding: 18px 25px;
+            border-radius: 50px;
+            border: 2px solid rgba(255,255,255,0.5);
+            background: rgba(255,255,255,0.9);
+            font-size: 1rem;
+            margin-bottom: 15px;
+            outline: none;
+            transition: all 0.3s;
+            text-align: center;
+            color: #2d3436;
+        }
+
+        input:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 15px rgba(108, 92, 231, 0.2);
+        }
+
+        .btn-search {
+            width: 100%;
+            padding: 18px;
+            border-radius: 50px;
+            border: none;
+            background: #6c5ce7;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.3);
+            text-transform: uppercase;
+        }
+
+        .btn-search:hover {
+            background: #5b4bc4;
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(108, 92, 231, 0.4);
+        }
+
+        /* Result Cards */
+        #result {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border: 1px solid white;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .card .name {
+            font-weight: 800;
+            color: #2d3436;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .card .class-name {
+            color: #636e72;
+            font-size: 0.85rem;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .id-container {
+            background: #f1f2f6;
+            padding: 10px 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .id-text {
+            color: #d63031;
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .copy-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .status-msg {
+            color: #d63031;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
 
-<div class="box">
+<div class="container">
+    <div class="profile-icon">SP</div>
     <h2>SK MERBAU</h2>
-    <p>Carian ID Delima</p>
-    <input type="text" id="nama" placeholder="Taip Nama Murid...">
-    <button onclick="cari()">CARI</button>
+    <p class="subtitle">ICT TEAM • Semakan ID DELIMa 2026</p>
+    
+    <input type="text" id="nameInput" placeholder="Taip nama murid di sini...">
+    <button class="btn-search" onclick="cariData()">Cari Sekarang</button>
+
     <div id="result"></div>
 </div>
 
 <script>
+    // Link CSV anda
     const csvURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIDL_97U8seCG9Ibuz-tfkjpouZe3V_q2Uh-NbvdhEIctFj35L6-LN55TuRw_3IQ/pub?output=csv";
+    let dataFull = [];
 
-    async function cari() {
-        const input = document.getElementById('nama').value.toUpperCase();
-        const resDiv = document.getElementById('result');
-        if(input.length < 3) { alert("Taip sekurang-kurangnya 3 huruf"); return; }
-        
-        resDiv.innerHTML = "Sedang mencari...";
-
+    // Muat data automatik
+    async function init() {
         try {
-            const response = await fetch(csvURL);
-            const data = await response.text();
-            const baris = data.split("\n");
-            resDiv.innerHTML = "";
-            
-            let jumpa = false;
-            for(let i = 1; i < baris.length; i++) {
-                const kolom = baris[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                if(kolom[1] && kolom[1].toUpperCase().includes(input)) {
-                    resDiv.innerHTML += `<div class="item">
-                        <b>Nama:</b> ${kolom[1]}<br>
-                        <b>Kelas:</b> ${kolom[2]} ${kolom[3]}<br>
-                        <b>ID:</b> <span style="color:red">${kolom[4]}</span>
-                    </div>`;
-                    jumpa = true;
-                }
-            }
-            if(!jumpa) resDiv.innerHTML = "Nama tidak dijumpai.";
+            const res = await fetch(csvURL);
+            const text = await res.text();
+            dataFull = text.split('\n').filter(r => r.trim() !== '').map(r => r.split(',').map(c => c.trim()));
+            console.log("Data Loaded");
         } catch (e) {
-            resDiv.innerHTML = "Ralat: Sila cuba di GitHub atau pastikan internet stabil.";
+            console.error("Gagal muat data");
         }
     }
+
+    function cariData() {
+        const input = document.getElementById('nameInput').value.trim().toUpperCase();
+        const resDiv = document.getElementById('result');
+        resDiv.innerHTML = '';
+
+        if (input.length < 3) {
+            resDiv.innerHTML = '<p class="status-msg">Sila taip sekurang-kurangnya 3 huruf.</p>';
+            return;
+        }
+
+        const match = dataFull.filter(row => row[0] && row[0].toUpperCase().includes(input));
+
+        if (match.length > 0) {
+            match.forEach(row => {
+                const email = row[2] || 'TIADA ID';
+                resDiv.innerHTML += `
+                    <div class="card">
+                        <span class="name">${row[0]}</span>
+                        <span class="class-name">KELAS: ${row[1] || '-'}</span>
+                        <div class="id-container">
+                            <span class="id-text">${email}</span>
+                            <button class="copy-btn" onclick="salin('${email}')">SALIN</button>
+                        </div>
+                    </div>
+                `;
+            });
+        } else {
+            resDiv.innerHTML = '<p class="status-msg">Nama tidak dijumpai dalam rekod.</p>';
+        }
+    }
+
+    function salin(teks) {
+        navigator.clipboard.writeText(teks).then(() => {
+            alert("ID DELIMa disalin!");
+        });
+    }
+
+    window.onload = init;
 </script>
 
 </body>
